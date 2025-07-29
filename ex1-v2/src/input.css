@@ -1,0 +1,31 @@
+@import "tailwindcss";
+:root {
+  --color-bg-price: #393d50;
+  --color-text-price: #99a9b5;
+  --color-price: #04d7f2;
+  --color-bg-title: #00bcd4;
+}
+
+@theme {
+  --font-main: "Montserrat", sans-serif;
+  --font-secondary: "Source Sans 3", sans-serif;
+
+  --text-price: 32px;
+  --text-sub-price: 16px;
+  --text-title: 36px;
+
+  --leading-title: 54px;
+  --tracking-title: 1.8px;
+
+  --color-sub-title: #5f727f;
+  --color-des-subtitle: #99a9b5;
+  --color-bg-list: #f4f6f7;
+  --color-bg-button: #b6c6c9;
+  --color-bg-hover-button: #2c2e3d;
+  --color-bg-price-card2: #2c2e3d;
+  --color-price-card2: #1aa3e1;
+  --color-bg-card2: #1c94ca;
+  --color-bg-card3: #7264bd;
+  --color-price-card3: #9986ff;
+  --color-sub-price: #99a9b5;
+}
