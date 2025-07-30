@@ -1,10 +1,4 @@
 @import "tailwindcss";
-:root {
-  --color-bg-price: #393d50;
-  --color-text-price: #99a9b5;
-  --color-price: #04d7f2;
-  --color-bg-title: #00bcd4;
-}
 
 @theme {
   --font-main: "Montserrat", sans-serif;
@@ -17,6 +11,9 @@
   --leading-title: 54px;
   --tracking-title: 1.8px;
 
+  --color-price-card1: #04d7f2;
+  --color-bg-card1: #00bcd4;
+  --color-bg-price: #393d50;
   --color-sub-title: #5f727f;
   --color-des-subtitle: #99a9b5;
   --color-bg-list: #f4f6f7;
