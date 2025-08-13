@@ -1,0 +1,122 @@
+const API_URL = "https://65d455c53f1ab8c63434e588.mockapi.io/job";
+
+const todoInput = document.querySelector(".todo__input");
+const addBtn = document.querySelector(".todo__add-btn");
+const todoList = document.querySelector(".todo__list");
+
+async function apiRequest({ path, method, body }) {
+  try {
+    const options = {
+      method,
+      headers: { "Content-Type": "application/json" },
+    };
+    if (body) {
+      if (method === "GET") {
+        const queryString = new URLSearchParams(body).toString();
+        path += `?${queryString}`;
+      } else options.body = JSON.stringify(body);
+    }
+    const res = await fetch(`${API_URL}${path}`, options);
+    return res;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function fetchTodos() {
+  try {
+    const res = await apiRequest({ path: "/", method: "GET" });
+    const todos = await res.json();
+    renderTodos(todos);
+  } catch (err) {
+    console.error(err);
+    alert("Loi tai danh sach cong viec");
+  }
+}
+//render danh sach cac cong viec
+function renderTodos(todos) {
+  const todoHtml = todos.map(
+    (todo) =>
+      `<li class = "todo__item">
+        <span class="todo__check ${
+          todo.checked ? "checked" : ""
+        }" data-index="${todo.id}">
+            <img src="../public/svg/Vector.svg" alt="Checkbox" />
+        </span>
+        <span class="todo__content">${todo.content}</span>
+        <span class="todo__delete" data-index="${todo.id}">&times</span>
+      </li>`
+  );
+  todoList.innerHTML = todoHtml.join("");
+}
+//them cong viec moi
+async function handleAddTodo() {
+  const content = todoInput.value.trim();
+  if (!content) {
+    alert("Chua nhap noi dung cong viec!");
+    todoInput.focus();
+    return;
+  }
+
+  try {
+    await apiRequest({
+      path: "/",
+      method: "POST",
+      body: {
+        createdAt: new Date().toISOString(),
+        checked: false,
+        content,
+      },
+    });
+    await fetchTodos();
+    todoInput.value = "";
+    todoInput.focus();
+    alert("Them cong viec moi thanh cong");
+  } catch (err) {
+    console.error(err);
+    alert("Loi khi them cong viec moi");
+  }
+}
+
+//xoa cong viec
+async function handledDeleteTodo(event) {
+  const deleteBtn = event.target.closest(".todo__delete");
+  if (!deleteBtn) return;
+  const id = deleteBtn.dataset.index;
+  const confirmDelete = confirm("Xac nhan xoa cong viec nay!");
+  if (!confirmDelete) return;
+  try {
+    await apiRequest({ path: `/${id}`, method: "DELETE" });
+    fetchTodos();
+    alert("Xoa cong viec thanh cong");
+  } catch (err) {
+    console.error(err);
+    alert("Loi xoa cong viec");
+  }
+}
+
+//cap nhat trang thai
+async function updateStatus(event) {
+  const checkbox = event.target.closest(".todo__check");
+  if (!checkbox) return;
+  try {
+    const id = checkbox.dataset.index;
+    const isChecked = !checkbox.classList.contains("checked");
+    await apiRequest({
+      path: `/${id}`,
+      method: "PUT",
+      body: {
+        checked: isChecked,
+      },
+    });
+    fetchTodos();
+  } catch (err) {
+    console.error(err);
+    alert("Loi cap nhat trang thai cong viec");
+  }
+}
+
+fetchTodos();
+addBtn.addEventListener("click", handleAddTodo);
+todoList.addEventListener("click", handledDeleteTodo);
+todoList.addEventListener("click", updateStatus);
