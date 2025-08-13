@@ -4,7 +4,7 @@ const todoInput = document.querySelector(".todo__input");
 const addBtn = document.querySelector(".todo__add-btn");
 const todoList = document.querySelector(".todo__list");
 
-function apiRequest(method, body) {
+async function apiRequest(url, method, body) {
   try {
     const options = {
       method: method,
@@ -13,7 +13,8 @@ function apiRequest(method, body) {
     if (body && method !== "GET") {
       options.body = JSON.stringify(body);
     }
-    return options;
+    const res = await fetch(url, options);
+    return res;
   } catch (err) {
     console.error(err);
   }
@@ -21,7 +22,7 @@ function apiRequest(method, body) {
 
 async function fetchTodos() {
   try {
-    const res = await fetch(API_URL, apiRequest("GET"));
+    const res = await apiRequest(API_URL, "GET");
     const todos = await res.json();
     renderTodos(todos);
   } catch (err) {
@@ -55,14 +56,11 @@ async function handleAddTodo() {
   }
 
   try {
-    await fetch(
-      API_URL,
-      apiRequest("POST", {
-        createdAt: new Date().toISOString(),
-        checked: false,
-        content,
-      })
-    );
+    await apiRequest(API_URL, "POST", {
+      createdAt: new Date().toISOString(),
+      checked: false,
+      content,
+    });
     await fetchTodos();
     todoInput.value = "";
     todoInput.focus();
@@ -81,7 +79,7 @@ async function handledDeleteTodo(event) {
   const confirmDelete = confirm("Xac nhan xoa cong viec nay!");
   if (!confirmDelete) return;
   try {
-    await fetch(`${API_URL}/${id}`, apiRequest("DELETE"));
+    await apiRequest(`${API_URL}/${id}`, "DELETE");
     fetchTodos();
     alert("Xoa cong viec thanh cong");
   } catch (err) {
@@ -97,12 +95,9 @@ async function updateStatus(event) {
   try {
     const id = checkbox.dataset.index;
     const isChecked = !checkbox.classList.contains("checked");
-    await fetch(
-      `${API_URL}/${id}`,
-      apiRequest("PUT", {
-        checked: isChecked,
-      })
-    );
+    await apiRequest(`${API_URL}/${id}`, "PUT", {
+      checked: isChecked,
+    });
     fetchTodos();
   } catch (err) {
     console.error(err);
