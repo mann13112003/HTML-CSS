@@ -4,16 +4,19 @@ const todoInput = document.querySelector(".todo__input");
 const addBtn = document.querySelector(".todo__add-btn");
 const todoList = document.querySelector(".todo__list");
 
-async function apiRequest(url, method, body) {
+async function apiRequest({ path, method, body }) {
   try {
     const options = {
-      method: method,
+      method,
       headers: { "Content-Type": "application/json" },
     };
-    if (body && method !== "GET") {
-      options.body = JSON.stringify(body);
+    if (body) {
+      if (method === "GET") {
+        const queryString = new URLSearchParams(body).toString();
+        path += `?${queryString}`;
+      } else options.body = JSON.stringify(body);
     }
-    const res = await fetch(url, options);
+    const res = await fetch(`${API_URL}${path}`, options);
     return res;
   } catch (err) {
     console.error(err);
@@ -22,7 +25,7 @@ async function apiRequest(url, method, body) {
 
 async function fetchTodos() {
   try {
-    const res = await apiRequest(API_URL, "GET");
+    const res = await apiRequest({ path: "/", method: "GET" });
     const todos = await res.json();
     renderTodos(todos);
   } catch (err) {
@@ -56,10 +59,14 @@ async function handleAddTodo() {
   }
 
   try {
-    await apiRequest(API_URL, "POST", {
-      createdAt: new Date().toISOString(),
-      checked: false,
-      content,
+    await apiRequest({
+      path: "/",
+      method: "POST",
+      body: {
+        createdAt: new Date().toISOString(),
+        checked: false,
+        content,
+      },
     });
     await fetchTodos();
     todoInput.value = "";
@@ -79,7 +86,7 @@ async function handledDeleteTodo(event) {
   const confirmDelete = confirm("Xac nhan xoa cong viec nay!");
   if (!confirmDelete) return;
   try {
-    await apiRequest(`${API_URL}/${id}`, "DELETE");
+    await apiRequest({ path: `/${id}`, method: "DELETE" });
     fetchTodos();
     alert("Xoa cong viec thanh cong");
   } catch (err) {
@@ -95,8 +102,12 @@ async function updateStatus(event) {
   try {
     const id = checkbox.dataset.index;
     const isChecked = !checkbox.classList.contains("checked");
-    await apiRequest(`${API_URL}/${id}`, "PUT", {
-      checked: isChecked,
+    await apiRequest({
+      path: `/${id}`,
+      method: "PUT",
+      body: {
+        checked: isChecked,
+      },
     });
     fetchTodos();
   } catch (err) {
