@@ -4,18 +4,32 @@ const todoInput = document.querySelector(".todo__input");
 const addBtn = document.querySelector(".todo__add-btn");
 const todoList = document.querySelector(".todo__list");
 
-//render danh sach cac cong viec
+function apiRequest(method, body) {
+  try {
+    const options = {
+      method: method,
+      headers: { "Content-Type": "application/json" },
+    };
+    if (body && method !== "GET") {
+      options.body = JSON.stringify(body);
+    }
+    return options;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 async function fetchTodos() {
   try {
-    const res = await fetch(API_URL, { method: "GET" });
+    const res = await fetch(API_URL, apiRequest("GET"));
     const todos = await res.json();
-    console.log(todos);
     renderTodos(todos);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     alert("Loi tai danh sach cong viec");
   }
 }
+//render danh sach cac cong viec
 function renderTodos(todos) {
   const todoHtml = todos.map(
     (todo) =>
@@ -23,7 +37,7 @@ function renderTodos(todos) {
         <span class="todo__check ${
           todo.checked ? "checked" : ""
         }" data-index="${todo.id}">
-            <img src="../assets/svg/Vector.svg" alt="Checkbox" />
+            <img src="../public/svg/Vector.svg" alt="Checkbox" />
         </span>
         <span class="todo__content">${todo.content}</span>
         <span class="todo__delete" data-index="${todo.id}">&times</span>
@@ -41,16 +55,15 @@ async function handleAddTodo() {
   }
 
   try {
-    await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    await fetch(
+      API_URL,
+      apiRequest("POST", {
         createdAt: new Date().toISOString(),
         checked: false,
         content,
-      }),
-    });
-    fetchTodos();
+      })
+    );
+    await fetchTodos();
     todoInput.value = "";
     todoInput.focus();
     alert("Them cong viec moi thanh cong");
@@ -59,7 +72,7 @@ async function handleAddTodo() {
     alert("Loi khi them cong viec moi");
   }
 }
-addBtn.addEventListener("click", handleAddTodo);
+
 //xoa cong viec
 async function handledDeleteTodo(event) {
   const deleteBtn = event.target.closest(".todo__delete");
@@ -68,33 +81,36 @@ async function handledDeleteTodo(event) {
   const confirmDelete = confirm("Xac nhan xoa cong viec nay!");
   if (!confirmDelete) return;
   try {
-    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-    await fetchTodos();
+    await fetch(`${API_URL}/${id}`, apiRequest("DELETE"));
+    fetchTodos();
     alert("Xoa cong viec thanh cong");
   } catch (err) {
-    console.log(err);
+    console.error(err);
     alert("Loi xoa cong viec");
   }
 }
-todoList.addEventListener("click", handledDeleteTodo);
-//cap nhat trang thai cong viec
+
+//cap nhat trang thai
 async function updateStatus(event) {
   const checkbox = event.target.closest(".todo__check");
   if (!checkbox) return;
   try {
     const id = checkbox.dataset.index;
     const isChecked = !checkbox.classList.contains("checked");
-    await fetch(`${API_URL}/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ checked: isChecked }),
-    });
+    await fetch(
+      `${API_URL}/${id}`,
+      apiRequest("PUT", {
+        checked: isChecked,
+      })
+    );
     fetchTodos();
   } catch (err) {
-    console.log(err);
+    console.error(err);
     alert("Loi cap nhat trang thai cong viec");
   }
 }
-todoList.addEventListener("click", updateStatus);
 
 fetchTodos();
+addBtn.addEventListener("click", handleAddTodo);
+todoList.addEventListener("click", handledDeleteTodo);
+todoList.addEventListener("click", updateStatus);
