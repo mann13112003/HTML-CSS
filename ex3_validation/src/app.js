@@ -22,34 +22,20 @@ function validatePassword(password) {
 function showError({ input, fieldErr, show }) {
   const errElement = document.getElementById(fieldErr);
   const inputElement = document.getElementById(input);
-  if (show) {
-    errElement.classList.remove("hidden");
-    inputElement.classList.remove("border-border");
-    inputElement.classList.add("border-red-700");
-  } else {
-    errElement.classList.add("hidden");
-    inputElement.classList.remove("border-red-700");
-    inputElement.classList.add("border-border");
-  }
+  errElement.classList.toggle("hidden", !show);
+  inputElement.classList.toggle("border-border", !show);
+  inputElement.classList.toggle("border-red-700", show);
 }
 
 function checkForm() {
   const emailValid = validateEmail(email.value);
   const passwordValid = validatePassword(password.value);
-
-  if (emailValid && passwordValid) {
-    submitBtn.disabled = false;
-    submitBtn.classList.remove("cursor-not-allowed");
-    submitBtn.classList.add("cursor-pointer");
-    submitBtn.classList.remove("bg-primary/60");
-    submitBtn.classList.add("bg-primary");
-  } else {
-    submitBtn.disabled = true;
-    submitBtn.classList.remove("cursor-pointer");
-    submitBtn.classList.add("cursor-not-allowed");
-    submitBtn.classList.remove("bg-primary");
-    submitBtn.classList.add("bg-primary/60");
-  }
+  const check = emailValid && passwordValid;
+  submitBtn.classList.toggle("cursor-pointer", check);
+  submitBtn.classList.toggle("cursor-not-allowed", !check);
+  submitBtn.classList.toggle("bg-primary", check);
+  submitBtn.classList.toggle("bg-primary/60", !check);
+  submitBtn.disabled = !check;
 }
 
 function showSuccessPopup() {
@@ -61,11 +47,11 @@ function closeSuccessPopup() {
 }
 
 email.addEventListener("input", function () {
-  if (email.value.length > 0) {
+  if (this.value.length > 0) {
     showError({
       input: "email",
       fieldErr: "errEmail",
-      show: !validateEmail(email.value),
+      show: !validateEmail(this.value),
     });
   } else {
     showError({ input: "email", fieldErr: "errEmail", show: false });
@@ -73,11 +59,11 @@ email.addEventListener("input", function () {
   checkForm();
 });
 password.addEventListener("input", function () {
-  if (password.value.length > 0) {
+  if (this.value.length > 0) {
     showError({
       input: "password",
       fieldErr: "errPassword",
-      show: !validatePassword(password.value),
+      show: !validatePassword(this.value),
     });
   } else {
     showError({ input: "password", fieldErr: "errPassword", show: false });
