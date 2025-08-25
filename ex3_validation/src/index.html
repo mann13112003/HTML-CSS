@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./output.css" />
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div
+      class="flex flex-row p-8 max-w-[1728px] h-auto gap-8 max-lg:flex-col-reverse max-lg:p-6"
+    >
+      <div
+        class="relative max-w-[816px] w-full h-full py-[155.5px] flex flex-col items-center max-lg:p-0"
+      >
+        <div class="max-w-[388px] max-lg:max-w-full">
+          <div>
+            <h2
+              class="text-4xl font-semibold text-primary font-roboto mb-7 leading-9"
+            >
+              Welcome Back👋
+            </h2>
+            <p class="text-xl font-roboto tracking-[1%] mb-12 max-lg:text-base">
+              Today is a new day. It's your day. You shape it. Sign in to start
+              managing your projects.
+            </p>
+          </div>
+          <form action="#" id="loginForm">
+            <div class="flex flex-col gap-2 mb-6">
+              <label
+                for="Email"
+                class="text-base font-roboto leading-4 max-lg:text-sm"
+                >Email</label
+              >
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Example@email.com"
+                class="h-12 text-base border border-border rounded-2xl p-4 font-roboto tracking-[1%] outline-0 max-lg:text-sm"
+                required
+              />
+              <div id="errEmail" class="text-red-600 text-sm hidden">
+                Please enter a valid email!
+              </div>
+            </div>
+            <div class="flex flex-col gap-2 mb-6">
+              <label
+                for="Password"
+                class="text-base font-roboto leading-4 max-lg:text-sm"
+                >Password</label
+              >
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="At least 8 characters"
+                class="h-12 text-base border rounded-2xl border-border p-4 font-roboto tracking-[1%] outline-0 max-lg:text-sm"
+                required
+              />
+              <div id="errPassword" class="text-red-600 text-sm hidden">
+                Please enter a password of 8-32 characters, containing at least
+                1 uppercase letter and 1 lowercase letter.
+              </div>
+            </div>
+            <div class="w-full flex justify-end mb-6">
+              <a
+                href="#"
+                class="text-base text-link font-roboto leading-4 max-lg:text-sm"
+                >Forgot Password?</a
+              >
+            </div>
+            <button
+              type="submit"
+              id="submitBtn"
+              class="w-full bg-primary/60 py-4 rounded-2xl text-white font-roboto text-xl text-nowrap mb-12 leading-[20px] cursor-not-allowed max-lg:text-base"
+              disabled
+            >
+              Sign in
+            </button>
+          </form>
+          <div class="relative mb-6">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-border"></div>
+            </div>
+            <div class="relative flex justify-center">
+              <span
+                class="px-2 py-[10px] bg-white text-secondary text-base leading-4 max-lg:hidden"
+                >Or
+              </span>
+              <span
+                class="px-2 py-[10px] bg-white text-secondary text-sm leading-4 lg:hidden"
+                >Or sign in with
+              </span>
+            </div>
+          </div>
+          <div class="flex flex-col mb-12 gap-4 max-lg:grid max-lg:grid-cols-2">
+            <div
+              class="flex flex-row items-center justify-center gap-4 bg-bg-social py-3 rounded-xl"
+            >
+              <img src="../public/svg/Google.svg" alt="Google" />
+              <span
+                class="text-base font-roboto text-social leading-4 max-lg:hidden"
+                >Sign in with Google
+              </span>
+              <span
+                class="text-base font-roboto text-social leading-4 lg:hidden"
+                >Google
+              </span>
+            </div>
+            <div
+              class="flex flex-row items-center justify-center gap-4 bg-bg-social py-3 rounded-xl"
+            >
+              <img src="../public/svg/Facebook.svg" alt="Facebook" />
+              <span
+                class="text-base font-roboto text-social leading-4 max-lg:hidden"
+                >Sign in with Facebook
+              </span>
+              <span
+                class="text-base font-roboto text-social leading-4 lg:hidden"
+                >Facebook
+              </span>
+            </div>
+          </div>
+          <div
+            class="w-full text-[18px] flex justify-center max-lg:mb-[57px] max-lg:text-base"
+          >
+            <span
+              >Don't you have an account?
+              <a href="#" class="text-link">Sign up</a></span
+            >
+          </div>
+          <div
+            class="absolute bottom-0 left-[50%] -translate-x-1/2 text-base text-nowrap max-lg:relative max-lg:text-center max-lg:text-sm"
+          >
+            © 2023 ALL RIGHTS RESERVED
+          </div>
+        </div>
+      </div>
+      <div
+        class="bg-[url(../public/img/Art.png)] w-[816px] h-[1076px] bg-no-repeat bg-cover bg-center rounded-3xl overflow-hidden max-lg:max-w-full max-lg:h-[180px] max-lg:bg-center max-lg:bg-cover"
+      ></div>
+    </div>
+
+    <!-- Popup -->
+    <div
+      id="successPopup"
+      class="fixed inset-0 bg-black/50 flex justify-center items-center p-4 hidden"
+    >
+      <div class="bg-white rounded-lg p-10 max-w-sm w-full">
+        <h3 class="w-full text-green-600 text-center text-xl font-roboto mb-4">
+          Login Successfull
+        </h3>
+        <button
+          id="closeBtn"
+          class="w-full text-xl text-white p-2 font-roboto bg-blue-700 rounded-xl"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+    <script src="./app.js"></script>
+  </body>
+</html>
