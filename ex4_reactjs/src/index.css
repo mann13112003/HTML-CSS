@@ -1,0 +1,11 @@
+:root {
+  --font-main: "Ubuntu", sans-serif;
+  --color-title: #112d4e;
+  --color-blue-light: #dbe2ef;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-main);
+}
