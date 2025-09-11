@@ -1,15 +1,14 @@
 import { memo } from "react";
 import type { Todo } from "../../types/todo.type";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { updateTodo, deleteTodo, setTodoUpdate } from "../../redux/todoSlice";
-import type { RootState, AppDispatch } from "../../redux/store";
 import { toast } from "react-toastify";
 interface TodoItemProps {
   todo: Todo;
 }
 const TodoItem = ({ todo }: TodoItemProps) => {
-  const { todos, loading } = useSelector((state: RootState) => state.todos);
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
+  const { todos, loading } = useAppSelector((state) => state.todos);
 
   // Delete Todo
   const handleDeleteTodo = async (id: string) => {

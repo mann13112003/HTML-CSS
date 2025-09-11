@@ -1,20 +1,19 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { fetchTodos, addTodo } from "../redux/todoSlice";
-import type { RootState, AppDispatch } from "../redux/store";
-import { useDispatch, useSelector } from "react-redux";
 import type { NewTodo } from "../types/todo.type";
 import TodoItem from "../components/ToDoApp/TodoItem";
 import TodoModal from "../components/ToDoApp/ModalUpdateTodo";
+import { useAppDispatch, useAppSelector } from "../redux/store";
 import "./ToDoApp.css";
 
-function ToDoApp() {
-  const [inputValue, setInputValue] = useState("");
+function ToDoAppPage() {
+  // const [inputValue, setInputValue] = useState("");
 
   const inputRefTodo = useRef<HTMLInputElement>(null);
 
-  const { todos, loading } = useSelector((state: RootState) => state.todos);
-  const dispatch = useDispatch<AppDispatch>();
+  const { todos, loading } = useAppSelector((state) => state.todos);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     handleFetchData();
@@ -35,20 +34,21 @@ function ToDoApp() {
   //Add todo
   const handleAddTodo = async () => {
     if (loading) return;
-    if (!inputValue.trim()) {
+    if (!inputRefTodo.current?.value.trim()) {
       toast.warn("Please enter content!");
       inputRefTodo.current?.focus();
       return;
     }
     try {
       const newTodo: NewTodo = {
-        content: inputValue,
+        content: inputRefTodo.current?.value,
         checked: false,
         createdAt: new Date().toISOString(),
       };
       await dispatch(addTodo(newTodo)).unwrap();
       toast.success("Add todo success");
-      setInputValue("");
+      // setInputValue("");
+      inputRefTodo.current.value = "";
       inputRefTodo.current?.focus();
     } catch (error) {
       toast.error("Add todo fail!");
@@ -66,8 +66,8 @@ function ToDoApp() {
               type="text"
               className="todo__input"
               placeholder="some words"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              // value={inputValue}
+              // onChange={(e) => setInputValue(e.target.value)}
               ref={inputRefTodo}
             />
             <button className="todo__add-btn" onClick={handleAddTodo}>
@@ -88,4 +88,4 @@ function ToDoApp() {
   );
 }
 
-export default ToDoApp;
+export default ToDoAppPage;

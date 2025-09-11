@@ -4,7 +4,7 @@ import InputComponent from "../components/Validate/Input";
 import MainButtonComponent from "../components/Validate/MainButton";
 import SocialButtonComponent from "../components/Validate/SocialButton";
 import "./Validation.css";
-function Validation() {
+function FormValidationPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showModal, setshowModal] = useState(false);
@@ -17,7 +17,7 @@ function Validation() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-
+  //Check password must be from 8-32 characters and contain both uppercase and lowercase letters
   const validatePassword = (password: string) => {
     if (password.length < 8 || password.length > 32) {
       return false;
@@ -26,6 +26,8 @@ function Validation() {
     const hasLowerCase = /[a-z]/.test(password);
     return hasUpperCase && hasLowerCase;
   };
+
+  const isFormValid = validateEmail(email) && validatePassword(password);
 
   const handleEmailChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,8 +52,6 @@ function Validation() {
     },
     []
   );
-
-  const isFormValid = validateEmail(email) && validatePassword(password);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -85,7 +85,7 @@ function Validation() {
                   label="Email"
                   placeholder="Example@email.com"
                   type="email"
-                  required={true}
+                  required
                   onChange={handleEmailChange}
                   value={email}
                   error={errors.email}
@@ -97,7 +97,7 @@ function Validation() {
                   label="Password"
                   placeholder="At least 8 characters"
                   type="password"
-                  required={true}
+                  required
                   onChange={handlePasswordChange}
                   value={password}
                   error={errors.password}
@@ -182,4 +182,4 @@ function Validation() {
   );
 }
 
-export default Validation;
+export default FormValidationPage;

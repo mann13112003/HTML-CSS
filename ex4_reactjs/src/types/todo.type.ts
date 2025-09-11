@@ -5,11 +5,7 @@ export interface Todo {
   createdAt: string;
 }
 
-export interface NewTodo {
-  content: string;
-  checked: boolean;
-  createdAt: string;
-}
+export type NewTodo = Omit<Todo, "id">;
 
 export interface TodoState {
   todos: Todo[];

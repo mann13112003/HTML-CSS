@@ -1,11 +1,17 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import HomePage from "./pages/Home";
-import ToDoApp from "./pages/ToDoApp";
-import Validation from "./pages/Validation";
+import ToDoAppPage from "./pages/ToDoApp";
+import FormValidationPage from "./pages/Validation";
+import { ROUTES } from "./constant/path.constants";
 function App() {
   return (
     <BrowserRouter>
+      <Routes>
+        <Route path={ROUTES.HOME} element={<HomePage />} />
+        <Route path={ROUTES.TODOAPP} element={<ToDoAppPage />} />
+        <Route path={ROUTES.FORMVALIDATE} element={<FormValidationPage />} />
+      </Routes>
       <ToastContainer
         position="top-right"
         autoClose={2000}
@@ -16,11 +22,6 @@ function App() {
         draggable
         theme="light"
       />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/to-do-app" element={<ToDoApp />} />
-        <Route path="/form-validate" element={<Validation />} />
-      </Routes>
     </BrowserRouter>
   );
 }
