@@ -15,10 +15,6 @@ function ToDoAppPage() {
   const { todos, loading } = useAppSelector((state) => state.todos);
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    handleFetchData();
-  }, []);
-
   //Fetch todo
   const handleFetchData = async () => {
     if (loading) return;
@@ -30,6 +26,10 @@ function ToDoAppPage() {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    handleFetchData();
+  }, []);
 
   //Add todo
   const handleAddTodo = async () => {
