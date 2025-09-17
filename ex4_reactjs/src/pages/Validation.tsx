@@ -1,21 +1,31 @@
 import { useCallback, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputComponent from "../components/Validate/Input";
 import MainButtonComponent from "../components/Validate/MainButton";
 import SocialButtonComponent from "../components/Validate/SocialButton";
+import { login } from "../services/authApi";
 import "./Validation.css";
-function FormValidationPage() {
-  const [email, setEmail] = useState("");
+import { toast } from "react-toastify";
+import { ROUTES } from "../constant/path.constants";
+import Cookies from "js-cookie";
+import { useAppDispatch } from "../redux/store";
+import { logIn } from "../redux/authSlide";
+function LogInPage() {
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [showModal, setshowModal] = useState(false);
-  const [errors, setErrors] = useState<{ email: boolean; password: boolean }>({
-    email: false,
+  const [errors, setErrors] = useState<{ name: boolean; password: boolean }>({
+    name: false,
     password: false,
   });
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
+
+  //Check username can only contain letters, numbers, and underscores
+  const validateName = (name: string) => {
+    const nameRegex = /^[A-Za-z0-9_]+$/;
+    return nameRegex.test(name);
   };
   //Check password must be from 8-32 characters and contain both uppercase and lowercase letters
   const validatePassword = (password: string) => {
@@ -27,15 +37,15 @@ function FormValidationPage() {
     return hasUpperCase && hasLowerCase;
   };
 
-  const isFormValid = validateEmail(email) && validatePassword(password);
+  const isFormValid = validateName(name) && validatePassword(password);
 
-  const handleEmailChange = useCallback(
+  const handleNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      setEmail(value);
+      setName(value);
       setErrors((prev) => ({
         ...prev,
-        email: value.length > 0 && !validateEmail(value),
+        name: value.length > 0 && !validateName(value),
       }));
     },
     []
@@ -53,16 +63,26 @@ function FormValidationPage() {
     []
   );
 
-  const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
+  const handleLogin = useCallback(
+    async (e: React.FormEvent) => {
       e.preventDefault();
-      if (isFormValid) {
-        setshowModal(true);
+      try {
+        const res = await login({ username: name, password: password });
+        dispatch(logIn(res.data.data.user));
+        if (res.status === 200) {
+          Cookies.set("accessToken", res.data.data.accessToken);
+          Cookies.set("refreshToken", res.data.data.refreshToken);
+          toast.success(`${res.data.message}`);
+        }
+
+        navigate(ROUTES.HOME);
+      } catch (e) {
+        console.error(e);
       }
-      setEmail("");
+      setName("");
       setPassword("");
     },
-    [isFormValid]
+    [name, password, dispatch, navigate]
   );
 
   return (
@@ -82,14 +102,14 @@ function FormValidationPage() {
             <form action="#">
               <div className="flex flex-col gap-2 mb-6">
                 <InputComponent
-                  label="Email"
-                  placeholder="Example@email.com"
-                  type="email"
+                  label="User Name"
+                  placeholder="JohnDoe"
+                  type="text"
                   required
-                  onChange={handleEmailChange}
-                  value={email}
-                  error={errors.email}
-                  errorText="Please enter a valid email!"
+                  onChange={handleNameChange}
+                  value={name}
+                  error={errors.name}
+                  errorText="Username can only contain letters, numbers, and underscores!"
                 />
               </div>
               <div className="flex flex-col gap-2 mb-6">
@@ -102,7 +122,7 @@ function FormValidationPage() {
                   value={password}
                   error={errors.password}
                   errorText="Please enter a password of 8-32 characters, containing at least
-                  1 uppercase letter and 1 lowercase letter."
+                  1 uppercase letter and 1 lowercase letter!"
                 />
               </div>
               <div className="w-full flex justify-end mb-6">
@@ -117,7 +137,7 @@ function FormValidationPage() {
                 type="submit"
                 disabled={!isFormValid}
                 content="Sign In"
-                onclick={handleSubmit}
+                onclick={handleLogin}
               />
             </form>
             <div className="relative mb-6">
@@ -162,24 +182,8 @@ function FormValidationPage() {
         </div>
         <div className="flex-1 bg-[url(/img/Art.png)] h-[1076px] bg-no-repeat bg-cover bg-center rounded-3xl overflow-hidden max-lg:max-w-full max-lg:h-[180px] "></div>
       </div>
-
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center p-4">
-          <div className="bg-white rounded-lg p-10 max-w-sm w-full">
-            <h3 className="w-full text-green-600 text-center text-xl font-roboto mb-4">
-              Login Successfull
-            </h3>
-            <button
-              onClick={() => setshowModal(false)}
-              className="w-full text-xl text-white p-2 font-roboto bg-blue-700 rounded-xl cursor-pointer hover:bg-blue-800"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </>
   );
 }
 
-export default FormValidationPage;
+export default LogInPage;

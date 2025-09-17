@@ -21,3 +21,20 @@ export interface SocialButton {
   contentDesktop: string;
   contentMobile: string;
 }
+
+export interface User {
+  id: string;
+  username: string;
+  createAt: string;
+  updateAt: string;
+}
+
+export interface UserLogin {
+  username: string;
+  password: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+}
