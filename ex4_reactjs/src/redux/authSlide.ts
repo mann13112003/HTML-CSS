@@ -1,7 +1,16 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 import type { AuthState } from "../types/validate.type";
 import { api } from "../services/authApi";
-import type { UserLogin } from "../types/validate.type";
+import type {
+  UserLogin,
+  UserLoginResponse,
+  UserProfile,
+  LogoutResponse,
+} from "../types/validate.type";
 import type { AxiosError } from "axios";
 const initialState: AuthState = {
   user: null,
@@ -11,11 +20,11 @@ const initialState: AuthState = {
 };
 
 //login
-export const login = createAsyncThunk(
+export const login = createAsyncThunk<UserLoginResponse, UserLogin>(
   "user/login",
-  async (data: UserLogin, { rejectWithValue }) => {
+  async (data, { rejectWithValue }) => {
     try {
-      const res = await api.post("/auth/login", data);
+      const res = await api.post<UserLoginResponse>("/auth/login", data);
       return res.data;
     } catch (error) {
       const err = error as AxiosError<{ error?: string }>;
@@ -24,11 +33,11 @@ export const login = createAsyncThunk(
   }
 );
 //getProfile
-export const getProfile = createAsyncThunk(
+export const getProfile = createAsyncThunk<UserProfile>(
   "user/getProfile",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await api.get("/auth/profile");
+      const res = await api.get<UserProfile>("/auth/profile");
       return res.data;
     } catch (error) {
       const err = error as AxiosError<{ error?: string }>;
@@ -38,7 +47,7 @@ export const getProfile = createAsyncThunk(
 );
 
 //logout
-export const logout = createAsyncThunk(
+export const logout = createAsyncThunk<LogoutResponse, string>(
   "user/logout",
   async (data: string | undefined, { rejectWithValue }) => {
     try {
@@ -62,11 +71,14 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.loading = false;
-        state.isAuthenticated = true;
-      })
+      .addCase(
+        login.fulfilled,
+        (state, action: PayloadAction<UserLoginResponse>) => {
+          state.user = action.payload.data.user;
+          state.loading = false;
+          state.isAuthenticated = true;
+        }
+      )
       .addCase(login.rejected, (state, action) => {
         state.user = null;
         state.isAuthenticated = false;
@@ -78,11 +90,14 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(getProfile.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.loading = false;
-        state.isAuthenticated = true;
-      })
+      .addCase(
+        getProfile.fulfilled,
+        (state, action: PayloadAction<UserProfile>) => {
+          state.user = action.payload.data.user;
+          state.loading = false;
+          state.isAuthenticated = true;
+        }
+      )
       .addCase(getProfile.rejected, (state, action) => {
         state.user = null;
         state.isAuthenticated = false;

@@ -25,13 +25,38 @@ export interface SocialButton {
 export interface User {
   id: string;
   username: string;
-  createAt: string;
-  updateAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface UserLogin {
   username: string;
   password: string;
+}
+
+export interface UserLoginResponse {
+  success: boolean;
+  message: string;
+  data: {
+    user: User;
+    accessToken: string;
+    refreshToken: string;
+  };
+}
+
+export interface UserProfile {
+  success: boolean;
+  message: string;
+  data: {
+    user: Omit<User, "createAt" | "updateAt">;
+  };
+}
+
+export interface LogoutResponse {
+  success: boolean;
+  message: string;
+  data?: object;
+  error: string;
 }
 
 export interface AuthState {
