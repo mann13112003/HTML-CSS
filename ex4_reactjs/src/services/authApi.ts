@@ -1,5 +1,4 @@
 import axios from "axios";
-import type { UserLogin } from "../types/validate.type";
 import Cookies from "js-cookie";
 import { ROUTES } from "../constant/path.constants";
 const API_SERVER = import.meta.env.VITE_API_SERVER;
@@ -11,6 +10,15 @@ export const api = axios.create({
   },
   withCredentials: true,
 });
+
+function handleLogoutAndRedirect(requestUrl: string) {
+  Cookies.remove("accessToken");
+  Cookies.remove("refreshToken");
+
+  if (requestUrl !== "/auth/login") {
+    window.location.href = ROUTES.LOGIN;
+  }
+}
 
 // Add a request interceptor
 api.interceptors.request.use(
@@ -50,14 +58,10 @@ api.interceptors.response.use(
           error.config.headers.Authorization = `Bearer ${newToken}`;
           return api.request(originalRequest);
         } else {
-          Cookies.remove("accessToken");
-          Cookies.remove("refreshToken");
-          window.location.href = ROUTES.LOGIN;
+          handleLogoutAndRedirect(originalRequest.url);
         }
       } catch (error) {
-        Cookies.remove("accessToken");
-        Cookies.remove("refreshToken");
-        window.location.href = ROUTES.LOGIN;
+        handleLogoutAndRedirect(originalRequest.url);
         console.error(error);
       }
     }
@@ -65,14 +69,6 @@ api.interceptors.response.use(
   }
 );
 
-export const login = (data: UserLogin) => {
-  return api.post("/auth/login", data);
-};
-
 export const logout = (data: string) => {
   return api.post("/auth/logout", data);
-};
-
-export const getProfile = () => {
-  return api.get("/auth/profile");
 };

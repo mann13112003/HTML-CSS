@@ -1,34 +1,28 @@
 import { Navigate } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
-import { logIn } from "../redux/authSlide";
-import { getProfile } from "../services/authApi";
+import { useCallback, useEffect } from "react";
+import { getProfile } from "../redux/authSlide";
 import { ROUTES } from "../constant/path.constants";
 import { useAppDispatch, useAppSelector } from "../redux/store";
+import { toast } from "react-toastify";
 interface ChildrenType {
   children: React.ReactNode;
 }
 const ProtectRoutes = ({ children }: ChildrenType) => {
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState(true);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   const checkUser = useCallback(async () => {
     try {
-      const res = await getProfile();
-      dispatch(logIn({ user: res.data.data.user }));
+      await dispatch(getProfile()).unwrap();
     } catch (err) {
+      toast.error(err as string);
       console.error(err);
-    } finally {
-      setLoading(false);
     }
   }, [dispatch]);
 
   useEffect(() => {
     checkUser();
   }, [checkUser]);
-
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
-
-  if (loading) return <div>Loading...</div>;
 
   if (!isAuthenticated) return <Navigate to={ROUTES.LOGIN} replace />;
 

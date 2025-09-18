@@ -1,15 +1,14 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import InputComponent from "../components/Validate/Input";
 import MainButtonComponent from "../components/Validate/MainButton";
 import SocialButtonComponent from "../components/Validate/SocialButton";
-import { login } from "../services/authApi";
-import "./Validation.css";
+import { login } from "../redux/authSlide";
+import "./LogIn.css";
 import { toast } from "react-toastify";
 import { ROUTES } from "../constant/path.constants";
 import Cookies from "js-cookie";
 import { useAppDispatch } from "../redux/store";
-import { logIn } from "../redux/authSlide";
 function LogInPage() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -21,6 +20,13 @@ function LogInPage() {
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = Cookies.get("accessToken");
+    if (token) {
+      navigate(ROUTES.HOME, { replace: true });
+    }
+  }, [navigate]);
 
   //Check username can only contain letters, numbers, and underscores
   const validateName = (name: string) => {
@@ -67,20 +73,17 @@ function LogInPage() {
     async (e: React.FormEvent) => {
       e.preventDefault();
       try {
-        const res = await login({ username: name, password: password });
-        dispatch(logIn(res.data.data.user));
-        if (res.status === 200) {
-          Cookies.set("accessToken", res.data.data.accessToken);
-          Cookies.set("refreshToken", res.data.data.refreshToken);
-          toast.success(`${res.data.message}`);
-        }
-
+        const resLogin = await dispatch(
+          login({ username: name, password: password })
+        ).unwrap();
+        Cookies.set("accessToken", resLogin.data.accessToken);
+        Cookies.set("refreshToken", resLogin.data.refreshToken);
+        toast.success(resLogin.message);
         navigate(ROUTES.HOME);
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        toast.error(error as string);
+        console.error(error);
       }
-      setName("");
-      setPassword("");
     },
     [name, password, dispatch, navigate]
   );
@@ -99,7 +102,7 @@ function LogInPage() {
                 start managing your projects.
               </p>
             </div>
-            <form action="#">
+            <form>
               <div className="flex flex-col gap-2 mb-6">
                 <InputComponent
                   label="User Name"
