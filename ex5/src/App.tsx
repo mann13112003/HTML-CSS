@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { ROUTES } from "./constant/path.constants";
 import HomePage from "./pages/Home";
 import ToDoAppPage from "./pages/ToDoApp";
 import LogInPage from "./pages/LogIn";
-import { ROUTES } from "./constant/path.constants";
-import ProtectRoutes from "./auth/ProtectRoute";
+
+import ProtectRoutes from "./auth/protectRoute";
 function App() {
   return (
     <BrowserRouter>

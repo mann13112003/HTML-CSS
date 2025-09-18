@@ -25,8 +25,8 @@ export interface SocialButton {
 export interface User {
   id: string;
   username: string;
-  createdAt?: string;
-  updatedAt?: string;
+  createAt: string;
+  updateAt: string;
 }
 
 export interface UserLogin {
@@ -34,34 +34,7 @@ export interface UserLogin {
   password: string;
 }
 
-export interface UserLoginResponse {
-  success: boolean;
-  message: string;
-  data: {
-    user: User;
-    accessToken: string;
-    refreshToken: string;
-  };
-}
-
-export interface UserProfile {
-  success: boolean;
-  message: string;
-  data: {
-    user: Omit<User, "createAt" | "updateAt">;
-  };
-}
-
-export interface LogoutResponse {
-  success: boolean;
-  message: string;
-  data?: object;
-  error: string;
-}
-
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  loading: boolean;
-  error: string | null;
 }
